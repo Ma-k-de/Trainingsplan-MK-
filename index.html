@@ -37,6 +37,27 @@
   .meta-label { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--muted); }
   .meta-value { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:18px; color:var(--accent); }
 
+  /* FTP EDITOR */
+  .ftp-editor { margin:0 40px; padding:20px 24px; background:var(--surface); border:1px solid var(--border); border-radius:12px; margin-bottom:0; }
+  .ftp-editor-title { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:11px; letter-spacing:4px; text-transform:uppercase; color:var(--muted); margin-bottom:16px; display:flex; align-items:center; gap:8px; }
+  .ftp-editor-title span { color:var(--accent3); }
+  .ftp-fields { display:flex; flex-wrap:wrap; gap:16px; align-items:flex-end; }
+  .ftp-field { display:flex; flex-direction:column; gap:6px; }
+  .ftp-field label { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--muted); }
+  .ftp-input-wrap { display:flex; align-items:center; gap:0; }
+  .ftp-input { width:90px; background:var(--surface2); border:1px solid var(--border); border-radius:6px 0 0 6px; color:var(--text); font-family:'Barlow Condensed',sans-serif; font-size:20px; font-weight:700; padding:8px 12px; outline:none; transition:border-color 0.2s; -moz-appearance:textfield; }
+  .ftp-input::-webkit-outer-spin-button,
+  .ftp-input::-webkit-inner-spin-button { -webkit-appearance:none; }
+  .ftp-input:focus { border-color:var(--accent3); }
+  .ftp-unit { background:var(--surface2); border:1px solid var(--border); border-left:none; border-radius:0 6px 6px 0; padding:8px 10px; font-size:12px; color:var(--muted); font-family:'Barlow Condensed',sans-serif; font-weight:600; white-space:nowrap; }
+  .ftp-apply-btn { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:13px; letter-spacing:1px; text-transform:uppercase; padding:10px 22px; border-radius:6px; border:1px solid var(--accent); background:transparent; color:var(--accent); cursor:pointer; transition:all 0.2s; white-space:nowrap; }
+  .ftp-apply-btn:hover { background:rgba(232,255,71,0.1); }
+  .ftp-apply-btn:active { transform:scale(0.98); }
+  .ftp-hint { font-size:11px; color:var(--muted); margin-top:10px; line-height:1.5; }
+  .ftp-hint strong { color:var(--text); font-weight:500; }
+  .ftp-updated { display:none; font-size:11px; color:var(--z2); margin-top:8px; font-weight:500; }
+  .ftp-updated.visible { display:block; }
+
   /* ZONES */
   .zones-section { padding:36px 40px 28px; border-bottom:1px solid var(--border); }
   .section-title { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:11px; letter-spacing:4px; text-transform:uppercase; color:var(--muted); margin-bottom:18px; }
@@ -136,6 +157,7 @@
 
   @media(max-width:600px){
     .hero,.zones-section,.phases-section,.plan-section,.tips-section{padding-left:18px;padding-right:18px;}
+    .ftp-editor{margin-left:18px;margin-right:18px;}
     .hero h1{font-size:40px;}
     .days-grid{grid-template-columns:1fr;}
   }
@@ -147,16 +169,54 @@
   <div class="hero-label">Strukturiertes Rennrad-Training · FTP-Steigerung · 10 Wochen</div>
   <h1>10-Wochen<br><span>FTP-Plan</span></h1>
   <div class="hero-meta">
-    <div class="meta-item"><span class="meta-label">Aktueller FTP</span><span class="meta-value">240W</span></div>
-    <div class="meta-item"><span class="meta-label">Ziel FTP</span><span class="meta-value">~265W</span></div>
+    <div class="meta-item"><span class="meta-label">Aktueller FTP</span><span class="meta-value" id="hero-ftp">240W</span></div>
+    <div class="meta-item"><span class="meta-label">Ziel FTP</span><span class="meta-value" id="hero-ftp-goal">~265W</span></div>
+    <div class="meta-item"><span class="meta-label">Max. Herzfrequenz</span><span class="meta-value" id="hero-hrmax">179 bpm</span></div>
+    <div class="meta-item"><span class="meta-label">LTHR</span><span class="meta-value" id="hero-lthr">166 bpm</span></div>
     <div class="meta-item"><span class="meta-label">Rad-Einheiten</span><span class="meta-value">3 / Woche</span></div>
     <div class="meta-item"><span class="meta-label">Gym-Einheiten</span><span class="meta-value">1 / Woche</span></div>
     <div class="meta-item"><span class="meta-label">Gesamtwochen</span><span class="meta-value">10</span></div>
   </div>
 </div>
 
-<div class="zones-section">
-  <div class="section-title">Trainingszonen — FTP 240W · LTHR 166 bpm</div>
+<!-- FTP & HFmax EDITOR -->
+<div class="ftp-editor" style="margin-top:28px">
+  <div class="ftp-editor-title">⚙ Werte aktualisieren <span>· Trainingszonen werden neu berechnet</span></div>
+  <div class="ftp-fields">
+    <div class="ftp-field">
+      <label for="input-ftp">FTP</label>
+      <div class="ftp-input-wrap">
+        <input class="ftp-input" type="number" id="input-ftp" min="100" max="500" step="1" value="240">
+        <span class="ftp-unit">W</span>
+      </div>
+    </div>
+    <div class="ftp-field">
+      <label for="input-hrmax">HFmax</label>
+      <div class="ftp-input-wrap">
+        <input class="ftp-input" type="number" id="input-hrmax" min="120" max="220" step="1" value="179">
+        <span class="ftp-unit">bpm</span>
+      </div>
+    </div>
+    <div class="ftp-field">
+      <label for="input-lthr">LTHR</label>
+      <div class="ftp-input-wrap">
+        <input class="ftp-input" type="number" id="input-lthr" min="100" max="210" step="1" value="166">
+        <span class="ftp-unit">bpm</span>
+      </div>
+    </div>
+    <button class="ftp-apply-btn" onclick="applyValues()">Zonen neu berechnen</button>
+  </div>
+  <div class="ftp-hint">
+    <strong>FTP</strong> = Functional Threshold Power (Schwellenwatt) &nbsp;·&nbsp;
+    <strong>LTHR</strong> = Laktatschwellen-Herzfrequenz &nbsp;·&nbsp;
+    <strong>HFmax</strong> = Maximale Herzfrequenz.<br>
+    Werte werden im Browser gespeichert und alle Zonen werden automatisch neu berechnet.
+  </div>
+  <div class="ftp-updated" id="ftp-updated">✓ Zonen wurden aktualisiert</div>
+</div>
+
+<div class="zones-section" style="margin-top:28px">
+  <div class="section-title" id="zones-title">Trainingszonen — FTP 240W · LTHR 166 bpm · HFmax 179 bpm</div>
 
   <div class="zones-tabs">
     <button class="zones-tab active" onclick="switchZones('power', this)">⚡ Leistung (Watt)</button>
@@ -165,82 +225,14 @@
 
   <!-- POWER ZONES -->
   <div class="zones-panel active" id="panel-power">
-    <div class="zones-grid">
-      <div class="zone-card z1">
-        <div class="zone-name">Z1 · Aktiv</div>
-        <div class="zone-watts">&lt;144W</div>
-        <div class="zone-pct">&lt;60% FTP</div>
-        <div class="zone-feel">Erholen, einrollen</div>
-      </div>
-      <div class="zone-card z2">
-        <div class="zone-name">Z2 · Aerob</div>
-        <div class="zone-watts">144–192W</div>
-        <div class="zone-pct">60–80% FTP</div>
-        <div class="zone-feel">Konversation möglich</div>
-      </div>
-      <div class="zone-card z3">
-        <div class="zone-name">Z3 · Tempo</div>
-        <div class="zone-watts">192–211W</div>
-        <div class="zone-pct">80–88% FTP</div>
-        <div class="zone-feel">Anstrengend, kontrolliert</div>
-      </div>
-      <div class="zone-card z4">
-        <div class="zone-name">Z4 · Sweet Spot</div>
-        <div class="zone-watts">211–228W</div>
-        <div class="zone-pct">88–95% FTP</div>
-        <div class="zone-feel">Kaum Sätze möglich</div>
-      </div>
-      <div class="zone-card z5">
-        <div class="zone-name">Z5 · Threshold</div>
-        <div class="zone-watts">228–252W</div>
-        <div class="zone-pct">95–105% FTP</div>
-        <div class="zone-feel">Grenze der Kontrolle</div>
-      </div>
-      <div class="zone-card z6">
-        <div class="zone-name">Z6 · VO2max</div>
-        <div class="zone-watts">264–288W</div>
-        <div class="zone-pct">110–120% FTP</div>
-        <div class="zone-feel">Maximal, kurz</div>
-      </div>
-    </div>
+    <div class="zones-grid" id="power-zones-grid"></div>
   </div>
 
   <!-- HR ZONES -->
   <div class="zones-panel" id="panel-hr">
-    <div class="zones-grid">
-      <div class="zone-card z1">
-        <div class="zone-name">HF Z1 · Regeneration</div>
-        <div class="zone-hr">&lt;128 bpm</div>
-        <div class="zone-pct">&lt;77% LTHR · &lt;71% HFmax</div>
-        <div class="zone-feel">Einrollen, aktive Pause</div>
-      </div>
-      <div class="zone-card z2">
-        <div class="zone-name">HF Z2 · Aerob</div>
-        <div class="zone-hr">128–145 bpm</div>
-        <div class="zone-pct">77–87% LTHR · 71–81% HFmax</div>
-        <div class="zone-feel">Z2-Grundlagenfahrten</div>
-      </div>
-      <div class="zone-card z3">
-        <div class="zone-name">HF Z3 · Tempo</div>
-        <div class="zone-hr">145–156 bpm</div>
-        <div class="zone-pct">87–94% LTHR · 81–87% HFmax</div>
-        <div class="zone-feel">Sweet Spot, Tempo</div>
-      </div>
-      <div class="zone-card z4">
-        <div class="zone-name">HF Z4 · Threshold</div>
-        <div class="zone-hr">156–166 bpm</div>
-        <div class="zone-pct">94–100% LTHR · 87–93% HFmax</div>
-        <div class="zone-feel">FTP-Intervalle</div>
-      </div>
-      <div class="zone-card z5">
-        <div class="zone-name">HF Z5 · VO2max</div>
-        <div class="zone-hr">166–179 bpm</div>
-        <div class="zone-pct">&gt;100% LTHR · &gt;93% HFmax</div>
-        <div class="zone-feel">Hochintensive Intervalle</div>
-      </div>
-    </div>
+    <div class="zones-grid" id="hr-zones-grid"></div>
     <div class="zones-note">
-      <strong>Basis dieser Zonen:</strong> Aus deinen 3 hochgeladenen Trainingsfahrten ermittelt. Comeback-Fahrt: sustained 249W @ <strong>166 bpm</strong> über 10+ min → LTHR = 166 bpm. HFmax = 179 bpm (beobachtet, Girls Day). Ruhepuls ca. 60 bpm geschätzt.<br><br>
+      <strong>Basis dieser Zonen:</strong> Aus deinen 3 hochgeladenen Trainingsfahrten ermittelt. Comeback-Fahrt: sustained 249W @ <strong id="note-lthr">166 bpm</strong> über 10+ min → LTHR = <span id="note-lthr2">166 bpm</span>. HFmax = <span id="note-hrmax">179 bpm</span> (beobachtet, Girls Day). Ruhepuls ca. 60 bpm geschätzt.<br><br>
       <strong>Wichtig:</strong> HR reagiert träger als Watt (Cardiac Drift, Hitze, Müdigkeit). Nutze immer <em>beide</em> Zonen zusammen — Watt zum Steuern, HR zum Überwachen. Bei ungewöhnlich hoher HR trotz normaler Watt: Übertrainingssignal, Ruhe einplanen.
     </div>
   </div>
@@ -274,6 +266,137 @@
 </div>
 
 <script>
+// ── Zone definitions ──────────────────────────────────────────────
+// Power zones: [minPct, maxPct] of FTP. null maxPct = open-ended upper.
+const POWER_ZONE_DEF = [
+  { z:'z1', name:'Z1 · Aktiv',       minPct:0,    maxPct:0.60,  feel:'Erholen, einrollen',           label:'<60% FTP' },
+  { z:'z2', name:'Z2 · Aerob',       minPct:0.60, maxPct:0.80,  feel:'Konversation möglich',          label:'60–80% FTP' },
+  { z:'z3', name:'Z3 · Tempo',       minPct:0.80, maxPct:0.88,  feel:'Anstrengend, kontrolliert',     label:'80–88% FTP' },
+  { z:'z4', name:'Z4 · Sweet Spot',  minPct:0.88, maxPct:0.95,  feel:'Kaum Sätze möglich',            label:'88–95% FTP' },
+  { z:'z5', name:'Z5 · Threshold',   minPct:0.95, maxPct:1.05,  feel:'Grenze der Kontrolle',          label:'95–105% FTP' },
+  { z:'z6', name:'Z6 · VO2max',      minPct:1.10, maxPct:1.20,  feel:'Maximal, kurz',                 label:'110–120% FTP' },
+];
+
+// HR zones: [minLthrPct, maxLthrPct, minHrmaxPct, maxHrmaxPct]. null = open-ended.
+const HR_ZONE_DEF = [
+  { z:'z1', name:'HF Z1 · Regeneration', minL:0,    maxL:0.77,  minH:0,    maxH:0.71,  feel:'Einrollen, aktive Pause',      pctLabel:'<77% LTHR · <71% HFmax' },
+  { z:'z2', name:'HF Z2 · Aerob',        minL:0.77, maxL:0.87,  minH:0.71, maxH:0.81,  feel:'Z2-Grundlagenfahrten',         pctLabel:'77–87% LTHR · 71–81% HFmax' },
+  { z:'z3', name:'HF Z3 · Tempo',        minL:0.87, maxL:0.94,  minH:0.81, maxH:0.87,  feel:'Sweet Spot, Tempo',            pctLabel:'87–94% LTHR · 81–87% HFmax' },
+  { z:'z4', name:'HF Z4 · Threshold',    minL:0.94, maxL:1.00,  minH:0.87, maxH:0.93,  feel:'FTP-Intervalle',               pctLabel:'94–100% LTHR · 87–93% HFmax' },
+  { z:'z5', name:'HF Z5 · VO2max',       minL:1.00, maxL:null,  minH:0.93, maxH:null,  feel:'Hochintensive Intervalle',     pctLabel:'>100% LTHR · >93% HFmax' },
+];
+
+// ── State ─────────────────────────────────────────────────────────
+const STORE_KEY = 'trainingsplan_v5';
+
+function loadState() {
+  try { return JSON.parse(localStorage.getItem(STORE_KEY) || '{}'); } catch { return {}; }
+}
+function saveState(state) {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch {}
+}
+function sessionKey(weekNum, dayIdx) { return `w${weekNum}_d${dayIdx}`; }
+
+function loadValues() {
+  const s = loadState();
+  return {
+    ftp:   s.ftp   ?? 240,
+    hrmax: s.hrmax ?? 179,
+    lthr:  s.lthr  ?? 166,
+  };
+}
+function saveValues(ftp, hrmax, lthr) {
+  const s = loadState();
+  s.ftp = ftp; s.hrmax = hrmax; s.lthr = lthr;
+  saveState(s);
+}
+
+// ── Zone calculation ──────────────────────────────────────────────
+function calcPowerZones(ftp) {
+  return POWER_ZONE_DEF.map(def => {
+    const lo = Math.round(def.minPct * ftp);
+    const hi = def.maxPct ? Math.round(def.maxPct * ftp) : null;
+    const watts = def.minPct === 0
+      ? `<${hi}W`
+      : hi ? `${lo}–${hi}W` : `>${lo}W`;
+    return { ...def, watts };
+  });
+}
+
+function calcHRZones(lthr, hrmax) {
+  return HR_ZONE_DEF.map(def => {
+    const lo = Math.round(def.minL * lthr);
+    const hi = def.maxL ? Math.round(def.maxL * lthr) : null;
+    const hr = def.minL === 0
+      ? `<${hi} bpm`
+      : hi ? `${lo}–${hi} bpm` : `>${lo} bpm`;
+    return { ...def, hr };
+  });
+}
+
+// ── Render zones ──────────────────────────────────────────────────
+function renderPowerZones(ftp) {
+  const zones = calcPowerZones(ftp);
+  document.getElementById('power-zones-grid').innerHTML = zones.map(z => `
+    <div class="zone-card ${z.z}">
+      <div class="zone-name">${z.name}</div>
+      <div class="zone-watts">${z.watts}</div>
+      <div class="zone-pct">${z.label}</div>
+      <div class="zone-feel">${z.feel}</div>
+    </div>
+  `).join('');
+}
+
+function renderHRZones(lthr, hrmax) {
+  const zones = calcHRZones(lthr, hrmax);
+  document.getElementById('hr-zones-grid').innerHTML = zones.map(z => `
+    <div class="zone-card ${z.z}">
+      <div class="zone-name">${z.name}</div>
+      <div class="zone-hr">${z.hr}</div>
+      <div class="zone-pct">${z.pctLabel}</div>
+      <div class="zone-feel">${z.feel}</div>
+    </div>
+  `).join('');
+}
+
+function updateZoneTitle(ftp, lthr, hrmax) {
+  document.getElementById('zones-title').textContent =
+    `Trainingszonen — FTP ${ftp}W · LTHR ${lthr} bpm · HFmax ${hrmax} bpm`;
+}
+
+function updateHeroValues(ftp, hrmax, lthr) {
+  document.getElementById('hero-ftp').textContent = `${ftp}W`;
+  document.getElementById('hero-ftp-goal').textContent = `~${Math.round(ftp * 1.104)}W`;
+  document.getElementById('hero-hrmax').textContent = `${hrmax} bpm`;
+  document.getElementById('hero-lthr').textContent = `${lthr} bpm`;
+  document.getElementById('note-lthr').textContent = `${lthr} bpm`;
+  document.getElementById('note-lthr2').textContent = `${lthr} bpm`;
+  document.getElementById('note-hrmax').textContent = `${hrmax} bpm`;
+}
+
+function applyValues() {
+  const ftp   = Math.max(100, Math.min(500, parseInt(document.getElementById('input-ftp').value)   || 240));
+  const hrmax = Math.max(120, Math.min(220, parseInt(document.getElementById('input-hrmax').value) || 179));
+  const lthr  = Math.max(100, Math.min(210, parseInt(document.getElementById('input-lthr').value)  || 166));
+
+  // Clamp inputs to validated values
+  document.getElementById('input-ftp').value   = ftp;
+  document.getElementById('input-hrmax').value = hrmax;
+  document.getElementById('input-lthr').value  = lthr;
+
+  saveValues(ftp, hrmax, lthr);
+  renderPowerZones(ftp);
+  renderHRZones(lthr, hrmax);
+  updateZoneTitle(ftp, lthr, hrmax);
+  updateHeroValues(ftp, hrmax, lthr);
+
+  const msg = document.getElementById('ftp-updated');
+  msg.classList.add('visible');
+  clearTimeout(msg._t);
+  msg._t = setTimeout(() => msg.classList.remove('visible'), 3000);
+}
+
+// ── Week data ─────────────────────────────────────────────────────
 const weeks = [
   {
     num:1, phase:"Aerobe Basis", hours:"~6h", badge:null,
@@ -446,43 +569,43 @@ const weeks = [
     title:"Schwellenarbeit beginnt",
     subtitle:"Erste echte FTP-Intervalle",
     focus:"<strong>Wochenziel:</strong> Die Threshold-Einheit ist das Kernstück dieser Woche. 2×20 min direkt an der Schwelle — gleichmäßige Wattausgabe ist wichtiger als ein perfekter Wert. ERG-Modus hilft enorm. Gym mit höherem Gewicht, Hypertrophie-Fokus.",
-    ftpNote:"Threshold = 95–105% FTP = 228–252W. Im ERG-Modus exakt auf 240W zuschalten. Ziel: letzter 20-Minuten-Block fühlt sich nicht leichter an als der erste — dann war das Pacing korrekt.",
+    ftpNote:"Threshold = 95–105% FTP. Im ERG-Modus exakt auf FTP zuschalten. Ziel: letzter 20-Minuten-Block fühlt sich nicht leichter an als der erste — dann war das Pacing korrekt.",
     days:[
       {
         type:'rad', tag:'Rad A · Z2 Basis', fit:'W04_A_Z2_Basis.fit',
-        workout:'Z2 Grundlagenfahrt lang', duration:'2:30h · 144–192W',
+        workout:'Z2 Grundlagenfahrt lang', duration:'2:30h · Z2',
         steps:[
           '<strong>0–10 min:</strong> Einrollen Z1',
-          '<strong>10–80 min:</strong> Z2 steady @ 144–192W, gleichmäßig, 80–88 rpm',
-          '<strong>80–130 min:</strong> Oberes Z2 @ 170–192W — Ausdauerfokus',
+          '<strong>10–80 min:</strong> Z2 steady, gleichmäßig, 80–88 rpm',
+          '<strong>80–130 min:</strong> Oberes Z2 — Ausdauerfokus',
           '<strong>130–140 min:</strong> Z1 ausrollen',
           '<strong>Hinweis:</strong> Diese lange Z2-Einheit ist die aerobe Basis für die harten Threshold-Tage.'
         ]
       },
       {
         type:'rad', tag:'Rad B · Threshold', fit:'W04_B_Threshold_2x20.fit',
-        workout:'Threshold 2×20 min @ 95–100% FTP', duration:'1:30h · 228–240W',
+        workout:'Threshold 2×20 min @ 95–100% FTP', duration:'1:30h · Z5',
         steps:[
           '<strong>0–20 min:</strong> Aufwärmen Z2, letzten 5 min auf 210W steigern',
-          '<strong>20–40 min:</strong> Block 1 @ 228–240W (95–100% FTP), 82–87 rpm, ERG aktiv',
-          '<strong>40–45 min:</strong> Aktive Pause Z1 (<144W), Atmung normalisieren',
-          '<strong>45–65 min:</strong> Block 2 @ 228–240W — gleiche Intensität wie Block 1',
+          '<strong>20–40 min:</strong> Block 1 @ 95–100% FTP, 82–87 rpm, ERG aktiv',
+          '<strong>40–45 min:</strong> Aktive Pause Z1, Atmung normalisieren',
+          '<strong>45–65 min:</strong> Block 2 @ 95–100% FTP — gleiche Intensität wie Block 1',
           '<strong>65–75 min:</strong> Abkühlen Z1',
-          '<strong>Tipp:</strong> Wenn Block 2 unmöglich erscheint, 220W akzeptieren. Nächste Woche wird es besser.'
+          '<strong>Tipp:</strong> Wenn Block 2 unmöglich erscheint, 92% FTP akzeptieren. Nächste Woche wird es besser.'
         ]
       },
       {
         type:'rad', tag:'Rad C · Sweet Spot Lang', fit:'W04_C_SS_Lang_3x20.fit',
-        workout:'Sweet Spot 3×20 min', duration:'~3:00h · 211–228W',
+        workout:'Sweet Spot 3×20 min', duration:'~3:00h · Z4',
         steps:[
           '<strong>0–20 min:</strong> Aufwärmen Z2',
-          '<strong>20–40 min:</strong> Block 1 @ 211–223W (88–93%), 85 rpm',
+          '<strong>20–40 min:</strong> Block 1 @ 88–93% FTP, 85 rpm',
           '<strong>40–45 min:</strong> Aktive Pause Z1',
-          '<strong>45–65 min:</strong> Block 2 @ 211–223W',
+          '<strong>45–65 min:</strong> Block 2 @ 88–93% FTP',
           '<strong>65–70 min:</strong> Aktive Pause Z1',
-          '<strong>70–90 min:</strong> Block 3 @ 211–223W — wenn gut drauf: auf 225–228W steigern',
+          '<strong>70–90 min:</strong> Block 3 @ 88–93% FTP — wenn gut drauf: auf 95% steigern',
           '<strong>90–100 min:</strong> Abkühlen Z1',
-          '<strong>Hinweis:</strong> Diese Einheit akkumuliert 60 min Sweet Spot — das ist die Schlüsselarbeit für FTP-Aufbau.'
+          '<strong>Hinweis:</strong> 60 min Sweet Spot akkumuliert — das ist die Schlüsselarbeit für FTP-Aufbau.'
         ]
       },
       {
@@ -511,38 +634,38 @@ const weeks = [
         workout:'Z2 mit Low-Cadence-Blöcken', duration:'2:30h · variabel',
         steps:[
           '<strong>0–10 min:</strong> Einrollen Z1',
-          '<strong>10–50 min:</strong> Z2 normal @ 144–192W, 82–88 rpm',
-          '<strong>50–60 min:</strong> Low-Cadence-Block 1 @ 192–211W, bewusst 55–65 rpm — Kraft spüren!',
+          '<strong>10–50 min:</strong> Z2 normal, 82–88 rpm',
+          '<strong>50–60 min:</strong> Low-Cadence-Block 1 @ Z3, bewusst 55–65 rpm — Kraft spüren!',
           '<strong>60–70 min:</strong> Z2 normal, Trittfrequenz wieder normalisieren',
-          '<strong>70–80 min:</strong> Low-Cadence-Block 2 @ 192–211W, 55–65 rpm',
+          '<strong>70–80 min:</strong> Low-Cadence-Block 2 @ Z3, 55–65 rpm',
           '<strong>80–90 min:</strong> Z2 normal',
-          '<strong>90–100 min:</strong> Low-Cadence-Block 3 @ 192–211W, 55–65 rpm',
-          '<strong>100–130 min:</strong> Z2 ausfahren @ 144–180W',
+          '<strong>90–100 min:</strong> Low-Cadence-Block 3 @ Z3, 55–65 rpm',
+          '<strong>100–130 min:</strong> Z2 ausfahren',
           '<strong>140–150 min:</strong> Z1 ausrollen',
           '<strong>Zweck:</strong> Low Cadence trainiert Muskelkraft auf dem Rad — direkter Carry-Over zu mehr Threshold-Watt.'
         ]
       },
       {
         type:'rad', tag:'Rad B · Threshold+', fit:'W05_B_Threshold_3x15.fit',
-        workout:'Threshold 3×15 min @ 100% FTP', duration:'1:45h · 228–252W',
+        workout:'Threshold 3×15 min @ 100% FTP', duration:'1:45h · Z5',
         steps:[
-          '<strong>0–20 min:</strong> Aufwärmen Z2, letzte 5 min auf 215W',
-          '<strong>20–35 min:</strong> Block 1 @ 228–252W (Ziel: 240W), 83–87 rpm, ERG aktiv',
+          '<strong>0–20 min:</strong> Aufwärmen Z2, letzte 5 min auf ~90% FTP',
+          '<strong>20–35 min:</strong> Block 1 @ 100% FTP, 83–87 rpm, ERG aktiv',
           '<strong>35–40 min:</strong> Aktive Pause Z1',
-          '<strong>40–55 min:</strong> Block 2 @ 228–252W — gleich wie Block 1',
+          '<strong>40–55 min:</strong> Block 2 @ 100% FTP — gleich wie Block 1',
           '<strong>55–60 min:</strong> Aktive Pause Z1',
-          '<strong>60–75 min:</strong> Block 3 @ 228–252W — letzter Block, alles rausholen',
+          '<strong>60–75 min:</strong> Block 3 @ 100% FTP — letzter Block, alles rausholen',
           '<strong>75–85 min:</strong> Abkühlen Z1',
           '<strong>Tipp:</strong> 3 × 15 min @ FTP sind 45 min Gesamtarbeit an der Schwelle — das ist viel. Sei stolz wenn du es schaffst.'
         ]
       },
       {
         type:'rad', tag:'Rad C · Z2+SS Lang', fit:'W05_C_Z2_SS_Lang.fit',
-        workout:'Z2 Basis + Sweet Spot Finish', duration:'3:15h · 144–223W',
+        workout:'Z2 Basis + Sweet Spot Finish', duration:'3:15h · Z2–Z4',
         steps:[
           '<strong>0–10 min:</strong> Einrollen Z1',
-          '<strong>10–70 min:</strong> Z2 Basis @ 144–192W, stabiles Tempo aufbauen',
-          '<strong>70–130 min:</strong> Sweet Spot @ 211–223W — Intensität im zweiten Teil der Einheit',
+          '<strong>10–70 min:</strong> Z2 Basis, stabiles Tempo aufbauen',
+          '<strong>70–130 min:</strong> Sweet Spot @ 88–93% FTP — Intensität im zweiten Teil der Einheit',
           '<strong>130–140 min:</strong> Z1 ausrollen',
           '<strong>Hinweis:</strong> Den Sweet Spot-Teil müde zu fahren ist der Trainingsreiz dieser Einheit — sog. "Fatigue Resistance".'
         ]
@@ -570,36 +693,36 @@ const weeks = [
     days:[
       {
         type:'rad', tag:'Rad A · Z1–Z2 Aktiv', fit:'W06_A_Z1_Z2_Aktiv.fit',
-        workout:'Z1–Z2 aktive Regeneration', duration:'1:30h · 100–169W',
+        workout:'Z1–Z2 aktive Regeneration', duration:'1:30h · Z1–Z2',
         steps:[
-          '<strong>0–20 min:</strong> Z1 locker (<144W), ganz ruhig, 90+ rpm',
-          '<strong>20–65 min:</strong> Unteres Z2 @ 144–169W — nicht über 170W gehen',
+          '<strong>0–20 min:</strong> Z1 locker, ganz ruhig, 90+ rpm',
+          '<strong>20–65 min:</strong> Unteres Z2 — nicht über 70% FTP gehen',
           '<strong>65–75 min:</strong> Z1 ausrollen',
           '<strong>Tipp:</strong> Kein "Draufsetzen" — diese Einheit ist bewusst zu kurz und zu leicht.'
         ]
       },
       {
         type:'rad', tag:'Rad B · Threshold Kurz', fit:'W06_B_Threshold_2x12.fit',
-        workout:'Threshold 2×12 min @ 95% FTP', duration:'1:15h · 228–240W',
+        workout:'Threshold 2×12 min @ 95% FTP', duration:'1:15h · Z5',
         steps:[
           '<strong>0–20 min:</strong> Aufwärmen Z2',
-          '<strong>20–32 min:</strong> Block 1 @ 228–240W, 83 rpm',
+          '<strong>20–32 min:</strong> Block 1 @ 95% FTP, 83 rpm',
           '<strong>32–37 min:</strong> Aktive Pause Z1',
-          '<strong>37–49 min:</strong> Block 2 @ 228–240W',
+          '<strong>37–49 min:</strong> Block 2 @ 95% FTP',
           '<strong>49–60 min:</strong> Abkühlen Z1',
           '<strong>Tipp:</strong> Kürzer als die letzten Wochen, aber selbe Intensität — Qualität über Quantität.'
         ]
       },
       {
         type:'rad', tag:'Rad C · Sweet Spot Moderat', fit:'W06_C_SS_Moderat.fit',
-        workout:'Sweet Spot 2×20 min @ 88% FTP', duration:'1:45h · 211–217W',
+        workout:'Sweet Spot 2×20 min @ 88% FTP', duration:'1:45h · Z4',
         steps:[
           '<strong>0–20 min:</strong> Aufwärmen Z2',
-          '<strong>20–40 min:</strong> Block 1 @ 211–217W (leicht unter Normalziel)',
+          '<strong>20–40 min:</strong> Block 1 @ 88% FTP (leicht unter Normalziel)',
           '<strong>40–45 min:</strong> Aktive Pause Z1',
-          '<strong>45–65 min:</strong> Block 2 @ 211–217W',
+          '<strong>45–65 min:</strong> Block 2 @ 88% FTP',
           '<strong>65–75 min:</strong> Abkühlen',
-          '<strong>Tipp:</strong> Wenn es sich leicht anfühlt — perfekt. Das bedeutet du erhols dich gut.'
+          '<strong>Tipp:</strong> Wenn es sich leicht anfühlt — perfekt. Das bedeutet du erholst dich gut.'
         ]
       },
       {
@@ -622,49 +745,49 @@ const weeks = [
     title:"VO2max Einführung",
     subtitle:"Kurze, hochintensive Intervalle",
     focus:"<strong>Wochenziel:</strong> VO2max-Intervalle sind der stärkste Stimulus für FTP-Wachstum. 5 × 5 min @ 110–112% FTP. Qualität ist entscheidend — lieber 4 saubere Intervalle als 5 schlechte. Gym mit explosiver Kraftarbeit.",
-    ftpNote:"VO2max-Zielwatt: 110–112% FTP = 264–269W. Bei Zweifel lieber 260W als 280W — der Stimulus kommt auch dann. Pausen sind heilig: volle 3 min Z1 zwischen Intervallen.",
+    ftpNote:"VO2max-Zielwatt: 110–112% FTP. Bei Zweifel lieber etwas weniger als zu viel — der Stimulus kommt auch dann. Pausen sind heilig: volle 3 min Z1 zwischen Intervallen.",
     days:[
       {
         type:'rad', tag:'Rad A · Z2 Basis', fit:'W07_A_Z2_Basis.fit',
-        workout:'Z2 Grundlagenfahrt lang', duration:'2:30h · 144–192W',
+        workout:'Z2 Grundlagenfahrt lang', duration:'2:30h · Z2',
         steps:[
           '<strong>0–10 min:</strong> Einrollen Z1',
-          '<strong>10–90 min:</strong> Z2 steady @ 144–192W, gleichmäßig, 82–88 rpm',
-          '<strong>90–130 min:</strong> Oberes Z2 @ 170–192W, Ausdauer im Fokus',
+          '<strong>10–90 min:</strong> Z2 steady, gleichmäßig, 82–88 rpm',
+          '<strong>90–130 min:</strong> Oberes Z2, Ausdauer im Fokus',
           '<strong>130–140 min:</strong> Z1 ausrollen',
           '<strong>Hinweis:</strong> Am Tag nach oder vor VO2max-Einheiten ist Z2 die Erholungsarbeit.'
         ]
       },
       {
         type:'rad', tag:'Rad B · VO2max', fit:'W07_B_VO2max_5x5.fit',
-        workout:'VO2max 5×5 min @ 110–112% FTP', duration:'1:30h · 264–269W',
+        workout:'VO2max 5×5 min @ 110–112% FTP', duration:'1:30h · Z6',
         steps:[
-          '<strong>0–20 min:</strong> Aufwärmen Z2, letzte 5 min progressiv bis 230W',
-          '<strong>20–25 min:</strong> Intervall 1 @ 264–269W — volle Konzentration, 90+ rpm, ERG aktiv',
-          '<strong>25–28 min:</strong> Pause Z1 (<144W), aktiv treten, nicht aufhören',
-          '<strong>28–33 min:</strong> Intervall 2 @ 264–269W',
+          '<strong>0–20 min:</strong> Aufwärmen Z2, letzte 5 min progressiv bis ~96% FTP',
+          '<strong>20–25 min:</strong> Intervall 1 @ 110–112% FTP — volle Konzentration, 90+ rpm, ERG aktiv',
+          '<strong>25–28 min:</strong> Pause Z1, aktiv treten, nicht aufhören',
+          '<strong>28–33 min:</strong> Intervall 2 @ 110–112% FTP',
           '<strong>33–36 min:</strong> Pause Z1',
-          '<strong>36–41 min:</strong> Intervall 3</strong>',
+          '<strong>36–41 min:</strong> Intervall 3',
           '<strong>41–44 min:</strong> Pause Z1',
           '<strong>44–49 min:</strong> Intervall 4',
           '<strong>49–52 min:</strong> Pause Z1',
-          '<strong>52–57 min:</strong> Intervall 5 — wenn nicht möglich: auf 255W gehen',
+          '<strong>52–57 min:</strong> Intervall 5 — wenn nicht möglich: auf 106% FTP gehen',
           '<strong>57–70 min:</strong> Abkühlen Z1–Z2',
           '<strong>Tipp:</strong> VO2max-Intervalle fühlen sich am Ende extrem schwer an — das ist richtig so.'
         ]
       },
       {
         type:'rad', tag:'Rad C · Sweet Spot Lang', fit:'W07_C_SS_4x15.fit',
-        workout:'Sweet Spot 4×15 min', duration:'~3:00h · 211–223W',
+        workout:'Sweet Spot 4×15 min', duration:'~3:00h · Z4',
         steps:[
           '<strong>0–20 min:</strong> Aufwärmen Z2',
-          '<strong>20–35 min:</strong> Block 1 @ 211–223W',
+          '<strong>20–35 min:</strong> Block 1 @ 88–93% FTP',
           '<strong>35–40 min:</strong> Pause Z1',
-          '<strong>40–55 min:</strong> Block 2 @ 211–223W',
+          '<strong>40–55 min:</strong> Block 2 @ 88–93% FTP',
           '<strong>55–60 min:</strong> Pause Z1',
-          '<strong>60–75 min:</strong> Block 3 @ 211–223W',
+          '<strong>60–75 min:</strong> Block 3 @ 88–93% FTP',
           '<strong>75–80 min:</strong> Pause Z1',
-          '<strong>80–95 min:</strong> Block 4 @ 211–223W',
+          '<strong>80–95 min:</strong> Block 4 @ 88–93% FTP',
           '<strong>95–105 min:</strong> Abkühlen',
           '<strong>Hinweis:</strong> 60 min Sweet Spot gesamt — beste Einheit für FTP-Basis. Erschöpfung nach Block 4 ist normal.'
         ]
@@ -696,14 +819,14 @@ const weeks = [
         workout:'Z2 mit 4×8 min Low-Cadence-Blöcken', duration:'2:30h · variabel',
         steps:[
           '<strong>0–10 min:</strong> Einrollen Z1',
-          '<strong>10–40 min:</strong> Z2 normal @ 144–192W, 82–88 rpm',
-          '<strong>40–48 min:</strong> Low Cadence 1 @ 192–211W, 55–60 rpm',
+          '<strong>10–40 min:</strong> Z2 normal, 82–88 rpm',
+          '<strong>40–48 min:</strong> Low Cadence 1 @ Z3, 55–60 rpm',
           '<strong>48–58 min:</strong> Z2 normal, Trittfrequenz erholen',
-          '<strong>58–66 min:</strong> Low Cadence 2 @ 192–211W, 55–60 rpm',
+          '<strong>58–66 min:</strong> Low Cadence 2 @ Z3, 55–60 rpm',
           '<strong>66–76 min:</strong> Z2 normal',
-          '<strong>76–84 min:</strong> Low Cadence 3 @ 192–211W',
+          '<strong>76–84 min:</strong> Low Cadence 3 @ Z3',
           '<strong>84–94 min:</strong> Z2 normal',
-          '<strong>94–102 min:</strong> Low Cadence 4 @ 192–211W',
+          '<strong>94–102 min:</strong> Low Cadence 4 @ Z3',
           '<strong>102–130 min:</strong> Z2 ausfahren',
           '<strong>140–150 min:</strong> Z1 ausrollen'
         ]
@@ -712,31 +835,31 @@ const weeks = [
         type:'rad', tag:'Rad B · VO2max+Threshold', fit:'W08_B_VO2_Thresh_Kombi.fit',
         workout:'VO2max 4×5 min + Threshold 2×10 min', duration:'~2:00h · intensiv',
         steps:[
-          '<strong>0–20 min:</strong> Aufwärmen Z2, progressiv bis 230W',
-          '<strong>20–25 min:</strong> VO2 Block 1 @ 264–288W',
+          '<strong>0–20 min:</strong> Aufwärmen Z2, progressiv bis ~96% FTP',
+          '<strong>20–25 min:</strong> VO2 Block 1 @ 110–120% FTP',
           '<strong>25–28 min:</strong> Pause Z1',
-          '<strong>28–33 min:</strong> VO2 Block 2 @ 264–288W',
+          '<strong>28–33 min:</strong> VO2 Block 2 @ 110–120% FTP',
           '<strong>33–36 min:</strong> Pause Z1',
-          '<strong>36–41 min:</strong> VO2 Block 3 @ 264–288W',
+          '<strong>36–41 min:</strong> VO2 Block 3 @ 110–120% FTP',
           '<strong>41–44 min:</strong> Pause Z1',
-          '<strong>44–49 min:</strong> VO2 Block 4 @ 264–288W',
+          '<strong>44–49 min:</strong> VO2 Block 4 @ 110–120% FTP',
           '<strong>49–54 min:</strong> Erholung Z1 (5 min)',
-          '<strong>54–64 min:</strong> Threshold Block 1 @ 228–252W (240W Ziel)',
+          '<strong>54–64 min:</strong> Threshold Block 1 @ 95–105% FTP',
           '<strong>64–68 min:</strong> Pause Z1',
-          '<strong>68–78 min:</strong> Threshold Block 2 @ 228–252W',
+          '<strong>68–78 min:</strong> Threshold Block 2 @ 95–105% FTP',
           '<strong>78–90 min:</strong> Abkühlen Z1',
           '<strong>Achtung:</strong> Das ist die härteste Einzeleinheit des Plans.'
         ]
       },
       {
         type:'rad', tag:'Rad C · Sweet Spot 90min', fit:'W08_C_SS_90min.fit',
-        workout:'Sweet Spot 90 min kontinuierlich', duration:'~2:00h · 211–223W',
+        workout:'Sweet Spot 90 min kontinuierlich', duration:'~2:00h · Z4',
         steps:[
           '<strong>0–20 min:</strong> Aufwärmen Z2',
-          '<strong>20–110 min:</strong> Kontinuierlicher Sweet Spot @ 211–223W ohne Pause',
+          '<strong>20–110 min:</strong> Kontinuierlicher Sweet Spot @ 88–93% FTP ohne Pause',
           '<strong>Mentale Strategie:</strong> In 30-Minuten-Blöcke teilen (20–50, 50–80, 80–110)',
           '<strong>110–120 min:</strong> Abkühlen Z1',
-          '<strong>Tipp:</strong> Wenn die Watt nicht mehr haltbar sind, auf 205–210W gehen statt abzubrechen. Kontinuität ist wichtiger als Zielwatt.'
+          '<strong>Tipp:</strong> Wenn die Watt nicht mehr haltbar sind, auf 85% FTP gehen statt abzubrechen. Kontinuität ist wichtiger als Zielwatt.'
         ]
       },
       {
@@ -761,38 +884,38 @@ const weeks = [
     days:[
       {
         type:'rad', tag:'Rad A · Z2 Locker', fit:'W09_A_Z2_Locker.fit',
-        workout:'Z2 Grundlagenfahrt (kürzer)', duration:'1:50h · 144–192W',
+        workout:'Z2 Grundlagenfahrt (kürzer)', duration:'1:50h · Z2',
         steps:[
           '<strong>0–10 min:</strong> Einrollen Z1',
-          '<strong>10–90 min:</strong> Z2 steady @ 144–192W, locker bleiben',
+          '<strong>10–90 min:</strong> Z2 steady, locker bleiben',
           '<strong>90–100 min:</strong> Z1 ausrollen',
-          '<strong>Tipp:</strong> Wenn du dich von Woche 8 noch erhols — das ist normal und zeigt, dass du hart genug trainiert hast.'
+          '<strong>Tipp:</strong> Wenn du dich von Woche 8 noch erholst — das ist normal und zeigt, dass du hart genug trainiert hast.'
         ]
       },
       {
         type:'rad', tag:'Rad B · VO2max', fit:'W09_B_VO2max_4x4.fit',
-        workout:'VO2max 4×4 min @ 115% FTP', duration:'1:30h · 264–288W',
+        workout:'VO2max 4×4 min @ 115% FTP', duration:'1:30h · Z6',
         steps:[
-          '<strong>0–20 min:</strong> Aufwärmen Z2, progressiv bis 235W',
-          '<strong>20–24 min:</strong> Intervall 1 @ 276W (115% FTP), volle Konzentration',
+          '<strong>0–20 min:</strong> Aufwärmen Z2, progressiv bis ~98% FTP',
+          '<strong>20–24 min:</strong> Intervall 1 @ 115% FTP, volle Konzentration',
           '<strong>24–28 min:</strong> Pause Z1',
-          '<strong>28–32 min:</strong> Intervall 2 @ 276W',
+          '<strong>28–32 min:</strong> Intervall 2 @ 115% FTP',
           '<strong>32–36 min:</strong> Pause Z1',
-          '<strong>36–40 min:</strong> Intervall 3 @ 276W',
+          '<strong>36–40 min:</strong> Intervall 3 @ 115% FTP',
           '<strong>40–44 min:</strong> Pause Z1',
-          '<strong>44–48 min:</strong> Intervall 4 @ 276W — letzter, alles geben',
+          '<strong>44–48 min:</strong> Intervall 4 @ 115% FTP — letzter, alles geben',
           '<strong>48–62 min:</strong> Abkühlen Z1',
           '<strong>Tipp:</strong> Kürzere Intervalle (4 min statt 5) bei gleicher Intensität — hoher Reiz, etwas weniger Gesamtbelastung.'
         ]
       },
       {
         type:'rad', tag:'Rad C · Threshold', fit:'W09_C_Threshold_2x20.fit',
-        workout:'Threshold 2×20 min @ 98–102% FTP', duration:'2:30h · 235–245W',
+        workout:'Threshold 2×20 min @ 98–102% FTP', duration:'2:30h · Z5',
         steps:[
           '<strong>0–20 min:</strong> Aufwärmen Z2',
-          '<strong>20–40 min:</strong> Block 1 @ 228–252W (Ziel: 235–245W), ERG aktiv',
+          '<strong>20–40 min:</strong> Block 1 @ 98–102% FTP, ERG aktiv',
           '<strong>40–45 min:</strong> Aktive Pause Z1',
-          '<strong>45–65 min:</strong> Block 2 @ 235–245W — gleiches Gefühl wie Block 1',
+          '<strong>45–65 min:</strong> Block 2 @ 98–102% FTP — gleiches Gefühl wie Block 1',
           '<strong>65–75 min:</strong> Abkühlen',
           '<strong>Hinweis:</strong> Wenn du diese 2×20 min besser fahren kannst als in Woche 4 — dann funktioniert der Plan.'
         ]
@@ -817,17 +940,17 @@ const weeks = [
     title:"Taper & FTP-Test",
     subtitle:"Frisch werden, dann alles zeigen",
     focus:"<strong>Wochenziel:</strong> Die Verbesserung wurde in 9 Wochen erarbeitet — jetzt geht es darum, sie sichtbar zu machen. Belastung stark reduzieren, frisch werden, FTP-Test mit vollem Fokus angehen.",
-    ftpNote:"FTP-Test (Tag C): 20 min Vollgas auf dem Smarttrainer × 0,95 = neuer FTP. Ziel: 262–268W (+9–11%). Alternativ: Ramp-Test in Zwift/Wahoo-App. Gut essen am Vortag, ausreichend schlafen, am Testtag nüchtern fahren (oder 2h nach einer kleinen Mahlzeit).",
+    ftpNote:"FTP-Test (Tag C): 20 min Vollgas auf dem Smarttrainer × 0,95 = neuer FTP. Ziel: +9–11% über Ausgangs-FTP. Alternativ: Ramp-Test in Zwift/Wahoo-App. Gut essen am Vortag, ausreichend schlafen, am Testtag nüchtern fahren (oder 2h nach einer kleinen Mahlzeit).",
     days:[
       {
         type:'rad', tag:'Rad A · Aktivierung', fit:'W10_A_Aktivierung.fit',
         workout:'Aktivierungseinheit mit Aufweckern', duration:'1:15h · variabel',
         steps:[
-          '<strong>0–20 min:</strong> Z1 sehr locker einrollen (<144W)',
-          '<strong>20–50 min:</strong> Unteres Z2 @ 144–163W, ruhige Basisfahrt',
-          '<strong>50–55 min:</strong> Aufwecker 1 @ 252–270W (5 min), hohe Kadenz',
+          '<strong>0–20 min:</strong> Z1 sehr locker einrollen',
+          '<strong>20–50 min:</strong> Unteres Z2, ruhige Basisfahrt',
+          '<strong>50–55 min:</strong> Aufwecker 1 @ 105–112% FTP (5 min), hohe Kadenz',
           '<strong>55–60 min:</strong> Z1 Pause',
-          '<strong>60–65 min:</strong> Aufwecker 2 @ 252–270W (5 min)',
+          '<strong>60–65 min:</strong> Aufwecker 2 @ 105–112% FTP (5 min)',
           '<strong>65–75 min:</strong> Abkühlen Z1',
           '<strong>Zweck:</strong> Muskeln wecken, schnelle Fasern aktivieren — nicht erschöpfen.'
         ]
@@ -847,9 +970,9 @@ const weeks = [
       },
       {
         type:'rad', tag:'Rad B · Z1 Erholung', fit:'W10_B_Z1_Erholung.fit',
-        workout:'Z1 Erholung — sehr leicht', duration:'45 min · <144W',
+        workout:'Z1 Erholung — sehr leicht', duration:'45 min · Z1',
         steps:[
-          '<strong>45 min Z1 @ 100–135W:</strong> Beine durchspülen, keinerlei Druck',
+          '<strong>45 min Z1:</strong> Beine durchspülen, keinerlei Druck',
           '<strong>Kadenz:</strong> 90–100 rpm',
           '<strong>Keine Intervalle, keine Erhöhung, kein Ehrgeiz — einfach locker treten.',
           '<strong>Tipp:</strong> Am Tag vor dem FTP-Test keinen Stress. Früh ins Bett, gut essen.'
@@ -859,22 +982,21 @@ const weeks = [
         type:'rad', tag:'🏆 Rad C · FTP-Test', fit:'W10_C_FTP_Test.fit',
         workout:'FTP-Test — 20 Minuten Vollgas', duration:'1:15h',
         steps:[
-          '<strong>0–20 min:</strong> Aufwärmen Z2 @ 144–192W, progressiv',
-          '<strong>20–25 min:</strong> Einfahren @ 211–223W (Sweet Spot)',
-          '<strong>25–26 min:</strong> 1 min scharf @ 264–288W (neuromuskuläre Aktivierung)',
+          '<strong>0–20 min:</strong> Aufwärmen Z2, progressiv',
+          '<strong>20–25 min:</strong> Einfahren @ Sweet Spot (88–93% FTP)',
+          '<strong>25–26 min:</strong> 1 min scharf @ 110–120% FTP (neuromuskuläre Aktivierung)',
           '<strong>26–31 min:</strong> Z1 Erholung — Puls runter',
           '<strong>31–51 min:</strong> 20 MINUTEN VOLLGAS — so gleichmäßig wie möglich, alles geben',
           '<strong>51–61 min:</strong> Abkühlen Z1',
           '<strong>Ergebnis:</strong> Durchschnitts-Watt der 20 min × 0,95 = neuer FTP',
-          '<strong>Erwartung:</strong> Ziel ~262–268W → FTP ~249–254W. Jeder Watt über 240W ist Fortschritt!'
+          '<strong>Erwartung:</strong> Ziel ~109–111% des Ausgangs-FTP. Jeder Watt über Ausgangs-FTP ist Fortschritt!'
         ]
       }
     ],
   },
 ];
 
-// ── Persistence via localStorage ──────────────────────────────────
-const STORE_KEY = 'trainingsplan_v4';
+// ── Persistence ───────────────────────────────────────────────────
 function loadState() {
   try { return JSON.parse(localStorage.getItem(STORE_KEY) || '{}'); } catch { return {}; }
 }
@@ -982,7 +1104,6 @@ function toggleDone(weekNum, dayIdx) {
   state[key].done = !state[key].done;
   saveState(state);
 
-  // Update day card appearance
   const dayCard = document.getElementById(`day-${weekNum}-${dayIdx}`);
   const btn = dayCard.querySelector('.done-btn');
   if (state[key].done) {
@@ -997,7 +1118,6 @@ function toggleDone(weekNum, dayIdx) {
     btn.title = 'Als abgeschlossen markieren';
   }
 
-  // Update week header badge
   const week = weeks.find(w => w.num === weekNum);
   const doneCount = week.days.filter((_, di) => state[sessionKey(weekNum, di)]?.done).length;
   document.getElementById(`wb-${weekNum}`).innerHTML = badgeHTML(week, doneCount, week.days.length);
@@ -1006,13 +1126,18 @@ function toggleDone(weekNum, dayIdx) {
   else wh.classList.remove('week-header-done');
 }
 
-// ── Save comment ──────────────────────────────────────────────────
+// ── Save comment (debounced) ──────────────────────────────────────
+const _commentTimers = {};
 function saveComment(weekNum, dayIdx) {
-  const state = loadState();
-  const key = sessionKey(weekNum, dayIdx);
-  state[key] = state[key] || {};
-  state[key].comment = document.getElementById(`comment-${weekNum}-${dayIdx}`).value;
-  saveState(state);
+  const key = `${weekNum}_${dayIdx}`;
+  clearTimeout(_commentTimers[key]);
+  _commentTimers[key] = setTimeout(() => {
+    const state = loadState();
+    const sKey = sessionKey(weekNum, dayIdx);
+    state[sKey] = state[sKey] || {};
+    state[sKey].comment = document.getElementById(`comment-${weekNum}-${dayIdx}`).value;
+    saveState(state);
+  }, 400);
 }
 
 // ── Zone tabs ─────────────────────────────────────────────────────
@@ -1023,8 +1148,20 @@ function switchZones(panel, btn) {
   btn.classList.add('active');
 }
 
-renderWeeks();
+// ── Init ──────────────────────────────────────────────────────────
+(function init() {
+  const { ftp, hrmax, lthr } = loadValues();
 
+  document.getElementById('input-ftp').value   = ftp;
+  document.getElementById('input-hrmax').value = hrmax;
+  document.getElementById('input-lthr').value  = lthr;
+
+  renderPowerZones(ftp);
+  renderHRZones(lthr, hrmax);
+  updateZoneTitle(ftp, lthr, hrmax);
+  updateHeroValues(ftp, hrmax, lthr);
+  renderWeeks();
+})();
 </script>
 </body>
 </html>
