@@ -1099,6 +1099,7 @@ function renderWeeks(tokens, openWeeks) {
 }
 
 function reRenderWeeks(tokens) {
+  flushComments();
   const openWeeks = new Set();
   document.querySelectorAll('.week-card.open').forEach(card => {
     openWeeks.add(parseInt(card.id.replace('week-', '')));
@@ -1142,6 +1143,7 @@ function saveComment(weekNum, dayIdx) {
   const key = `${weekNum}_${dayIdx}`;
   clearTimeout(_commentTimers[key]);
   _commentTimers[key] = setTimeout(() => {
+    delete _commentTimers[key];
     const state = loadState();
     const sKey = sessionKey(weekNum, dayIdx);
     state[sKey] = state[sKey] || {};
@@ -1149,6 +1151,25 @@ function saveComment(weekNum, dayIdx) {
     saveState(state);
   }, 400);
 }
+
+// Flushes all pending comment saves immediately (before unload or re-render)
+function flushComments() {
+  const pending = Object.keys(_commentTimers);
+  if (!pending.length) return;
+  const state = loadState();
+  pending.forEach(key => {
+    clearTimeout(_commentTimers[key]);
+    delete _commentTimers[key];
+    const [weekNum, dayIdx] = key.split('_').map(Number);
+    const textarea = document.getElementById(`comment-${weekNum}-${dayIdx}`);
+    if (!textarea) return;
+    const sKey = sessionKey(weekNum, dayIdx);
+    state[sKey] = state[sKey] || {};
+    state[sKey].comment = textarea.value;
+  });
+  saveState(state);
+}
+window.addEventListener('beforeunload', flushComments);
 
 // ── Zone tabs ─────────────────────────────────────────────────────
 function switchZones(panel, btn) {
